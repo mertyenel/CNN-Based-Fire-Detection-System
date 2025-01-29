@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sınıflandırma Sonucu</title>
+    <style>
+        /* Genel Stil Ayarları */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Video Arka Plan */
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(0.5);
+        }
+
+        /* Overlay Katmanı */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 0;
+        }
+
+        /* Ana Konteyner */
+        .content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 1;
+            color: #fff;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Başlık */
+        .content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #ff4500;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+        }
+
+        /* Görüntü */
+        .content img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        /* Tahmin Bilgisi */
+        .prediction {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #ff4500;
+        }
+
+        /* Yangın yoksa */
+        .prediction.no-fire {
+            color: green;
+        }
+
+        /* Geri Dönüş Butonu */
+        .btn-back {
+            background-color: #ff4500;
+            color: #fff;
+            border: none;
+            margin: 15px 0px 0px 0px;
+            padding: 15px 30px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-back:hover {
+            background-color: #e03d00;
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            color: #bbb;
+            font-size: 0.8rem;
+            z-index: 1;
+        }
+
+        footer a {
+            color: #ff4500;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Duyarlı Tasarım */
+        @media (max-width: 600px) {
+            .content h1 {
+                font-size: 2rem;
+            }
+
+            .prediction {
+                font-size: 1.2rem;
+            }
+
+            .btn-back {
+                padding: 12px 25px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Video Arka Plan -->
+    <video autoplay muted loop class="video-background">
+        <source src="{% static 'classifier/videos/fire_background.mp4' %}" type="video/mp4">
+        Tarayıcınız video etiketini desteklemiyor.
+    </video>
+
+    <!-- Overlay Katmanı -->
+    <div class="overlay"></div>
+
+    <!-- Ana İçerik -->
+    <div class="content">
+        <h1>Sınıflandırma Sonucu</h1>
+        {% if uploaded_file_url %}
+            <img src="{{ uploaded_file_url }}" alt="Sınıflandırılan Görüntü">
+            <p>Bu görüntü 
+                <span class="prediction
+                    {% if prediction != 'yangın var' %} no-fire
+                    {% endif %}">
+                    {{ prediction }}
+                </span> 
+                olarak sınıflandırıldı.
+            </p>
+        {% else %}
+            <p>Bir hata oluştu veya test klasöründe görüntü bulunamadı.</p>
+        {% endif %}
+        <a href="{% url 'home' %}" class="btn-back">Yeni Görüntü Sınıflandır</a>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Yangın Tespit Sistemi</p>
+    </footer>
+</body>
+</html>
